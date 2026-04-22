@@ -43,4 +43,51 @@ Abaixo estão as variáveis de ambiente necessárias para o funcionamento corret
 
 > ⚠️ **Importante:** A `OPEN_CLOUD_API_KEY` é obrigatória. Sem ela, o agente não conseguirá se autenticar nos endpoints protegidos do n8n. Configure-a no arquivo `.env` antes de executar o projeto.
 
+## Docker
+
+O projeto já conta com os arquivos Docker configurados. Abaixo estão as instruções para build e execução.
+
+### Arquivos Disponíveis
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `Dockerfile` | Imagem base `python:3.11-slim` com instalação das dependências |
+| `.dockerignore` | Exclusões para otimizar o build |
+| `docker-compose.yml` | Orquestração opcional do container |
+
+### Build da Imagem
+
+```bash
+docker build -t agente-open-cloud:latest .
+```
+
+### Executando o Container
+
+#### Usando arquivo .env
+
+```bash
+docker run --rm --env-file .env agente-open-cloud:latest
+```
+
+#### Passando variáveis diretamente
+
+```bash
+docker run --rm \
+  -e N8N_WEBHOOK_URL="https://n8n.exemplo.com/webhook/xyz" \
+  -e OPEN_CLOUD_API_KEY="sk-abc123def456" \
+  agente-open-cloud:latest
+```
+
+### Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+Para executar em background:
+
+```bash
+docker-compose up -d --build
+```
+
 Preencha cada seção com detalhes específicos do seu serviço e operação.

@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  agente:
+    build: .
+    container_name: agente-open-cloud
+    env_file:
+      - .env
+    restart: unless-stopped
