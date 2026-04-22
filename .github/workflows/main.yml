@@ -1,0 +1,47 @@
+name: CI - Agente Open Cloud
+
+# A esteira "acorda" em cada push ou pull request na branch main [cite: 95]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Baixa o código do repositório para a máquina virtual [cite: 81]
+      - uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Python (Padrão de Mercado) [cite: 82]
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Instala dependências e ferramentas de qualidade [cite: 90]
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 bandit
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # 4. DIA 7 - LINTING: Validação de estilo e código "macarrônico" 
+      - name: Lint with flake8
+        run: |
+          # Para a esteira se houver erros de sintaxe ou nomes indefinidos
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Avisos de estilo (saída amigável)
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      # 5. DIA 7 - SEGURANÇA: Busca por vulnerabilidades e chaves expostas 
+      - name: Security check with bandit
+        run: |
+          bandit -r . -x ./tests,./venv
+
+      # 6. DIA 7 - TESTES: Execução automática da rede de segurança TDD 
+      - name: Run Unit Tests
+        run: |
+          python3 -m unittest discover -s tests
